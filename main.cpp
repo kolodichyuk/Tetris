@@ -90,7 +90,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 				paintType = lastPaint;
 				InvalidateRect(hWnd, &eat_rect, TRUE);
 			}
-			break;
+			break; 
 		case WM_KEYDOWN:
 			paintType = brickPaint;
 			if (LOWORD(wParam) == VK_LEFT && brick.left - 20 >= 20) {
