@@ -5,7 +5,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); // callback functions of t
 
 // get screen metrics
 int width  = GetSystemMetrics(SM_CXSCREEN),
-	height = GetSystemMetrics(SM_CYSCREEN);
+    height = GetSystemMetrics(SM_CYSCREEN);
 
 struct Shape {
 	public:
@@ -19,9 +19,9 @@ struct Shape {
 };
 
 int WINAPI WinMain(HINSTANCE hInstance,
-				   HINSTANCE hPervInstance,
-				   LPSTR lpCmdLine,
-				   int nCmdShow) {
+	           HINSTANCE hPervInstance,
+		   LPSTR lpCmdLine,
+		   int nCmdShow) {
 	UNREFERENCED_PARAMETER(hPervInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	MSG msg;
@@ -50,11 +50,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 }
 
 HBRUSH hBrush_red  = CreateSolidBrush(RGB(155, 1, 34)),
-	   hBrush_blue = CreateSolidBrush(RGB(32, 79, 146)),
-	   hBrush_back = CreateSolidBrush(RGB(9, 12, 18));
-Shape brick((width / 2) - 110, height - 100, (width / 2) + 110, height - 50), eat(0, 0, 0, 0);
-RECT brick_rect = { brick.left, brick.top, brick.right, brick.bottom },
-	 eat_rect   = { eat.left, eat.top, eat.right, height - 100 };
+       hBrush_blue = CreateSolidBrush(RGB(32, 79, 146)),
+       hBrush_back = CreateSolidBrush(RGB(9, 12, 18));
+Shape brick((width / 2) - 110, height - 100, (width / 2) + 110, height - 50), 
+      eat(0, 0, 0, 0);
+RECT brick_rect = { brick.left, brick.top, brick.right, brick.bottom }, 
+     eat_rect   = { eat.left, eat.top, eat.right, height - 100 };
 enum PaintType { brickPaint, eatPaint, lastPaint } paintType;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
