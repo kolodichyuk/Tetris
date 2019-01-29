@@ -8,14 +8,14 @@ int width  = GetSystemMetrics(SM_CXSCREEN),
     height = GetSystemMetrics(SM_CYSCREEN);
 
 struct Shape {
-	public:
-		int left, top, right, bottom;
-		Shape(int left, int top, int right, int bottom) {
-			this->left = left;
-			this->top = top;
-			this->right = right;
-			this->bottom = bottom;
-		}
+    public:
+	int left, top, right, bottom;
+	Shape(int left, int top, int right, int bottom) {
+	    this->left = left;
+	    this->top = top;
+	    this->right = right;
+	    this->bottom = bottom;
+	}
 };
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -62,71 +62,71 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	HDC hdc;
 	PAINTSTRUCT ps;
 	switch (uMsg) {
-		case WM_CREATE:
-			srand(time(NULL));
-			eat.left = rand() % width;
-			if (eat.left <= 30) 
-				eat.left += 30;
-			if (eat.left >= width - 30)
-				eat.left -= 30;
-			eat.right = eat.left + 30;
-			eat.top = 0;
-			eat.bottom = 30;
-			SetTimer(hWnd, 1, 20, 0);
+	    case WM_CREATE:
+		srand(time(NULL));
+		eat.left = rand() % width;
+		if (eat.left <= 30) 
+		    eat.left += 30;
+		if (eat.left >= width - 30)
+		    eat.left -= 30;
+		eat.right = eat.left + 30;
+		eat.top = 0;
+		eat.bottom = 30;
+		SetTimer(hWnd, 1, 20, 0);
+		break;
+	    case WM_TIMER:
+		if (eat.bottom + 8 <= brick.top + 2) {
+		    eat.top += 8;
+		    eat.bottom += 8;
+		    paintType = eatPaint;
+		    eat_rect = { eat.left, eat.top - 8, eat.right, eat.bottom };
+		    InvalidateRect(hWnd, &eat_rect, TRUE);
+		} else {
+		    eat.left = rand() % (width - 50);
+		    eat.right = eat.left + 30;
+		    eat.top = 0;
+		    eat.bottom = 30;
+		    paintType = lastPaint;
+		    InvalidateRect(hWnd, &eat_rect, TRUE);
+		}
+		break; 
+	    case WM_KEYDOWN:
+		paintType = brickPaint;
+		if (LOWORD(wParam) == VK_LEFT && brick.left - 20 >= 20) {
+		    brick.left -= 20;
+		    brick.right -= 20;
+		    brick_rect = { brick.left, brick.top, brick.right + 20, brick.bottom };
+		    InvalidateRect(hWnd, &brick_rect, TRUE);
+		} else if (LOWORD(wParam) == VK_RIGHT && brick.right + 20 <= width - 20) {
+		    brick.left += 20;
+		    brick.right += 20;
+		    brick_rect = { brick.left - 20, brick.top, brick.right, brick.bottom };
+		    InvalidateRect(hWnd, &brick_rect, TRUE);
+		}
+		break;
+	    case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		switch (paintType) {
+		    case eatPaint:
+			SelectObject(hdc, hBrush_red);
+			RoundRect(hdc, eat.left, eat.top, eat.right, eat.bottom, 20, 20);
 			break;
-		case WM_TIMER:
-			if (eat.bottom + 8 <= brick.top + 2) {
-				eat.top += 8;
-				eat.bottom += 8;
-				paintType = eatPaint;
-				eat_rect = { eat.left, eat.top - 8, eat.right, eat.bottom };
-				InvalidateRect(hWnd, &eat_rect, TRUE);
-			}
-			else {
-				eat.left = rand() % (width - 50);
-				eat.right = eat.left + 30;
-				eat.top = 0;
-				eat.bottom = 30;
-				paintType = lastPaint;
-				InvalidateRect(hWnd, &eat_rect, TRUE);
-			}
-			break; 
-		case WM_KEYDOWN:
-			paintType = brickPaint;
-			if (LOWORD(wParam) == VK_LEFT && brick.left - 20 >= 20) {
-				brick.left -= 20;
-				brick.right -= 20;
-				brick_rect = { brick.left, brick.top, brick.right + 20, brick.bottom };
-				InvalidateRect(hWnd, &brick_rect, TRUE);
-			}
-			else if (LOWORD(wParam) == VK_RIGHT && brick.right + 20 <= width - 20) {
-				brick.left += 20;
-				brick.right += 20;
-				brick_rect = { brick.left - 20, brick.top, brick.right, brick.bottom };
-				InvalidateRect(hWnd, &brick_rect, TRUE);
-			}
+		    case brickPaint:
+			SelectObject(hdc, hBrush_blue);
+			RoundRect(hdc, brick.left, brick.top, brick.right, brick.bottom, 40, 40);
 			break;
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			if (paintType == eatPaint) {
-				SelectObject(hdc, hBrush_red);
-				RoundRect(hdc, eat.left, eat.top, eat.right, eat.bottom, 20, 20);
-			}
-			else if (paintType == brickPaint) {
-				SelectObject(hdc, hBrush_blue);
-				RoundRect(hdc, brick.left, brick.top, brick.right, brick.bottom, 40, 40);
-			}
-			else if (paintType == lastPaint) {
-				SelectObject(hdc, hBrush_back);
-				RoundRect(hdc, eat.left, eat.top, eat.right, eat.bottom, 20, 20);
-			}
-			EndPaint(hWnd, &ps);
+		    case lastPaint:
+			SelectObject(hdc, hBrush_back);
+			RoundRect(hdc, eat.left, eat.top, eat.right, eat.bottom, 20, 20);
 			break;
-		case WM_DESTROY:
-			PostQuitMessage(NULL);
-			break;
+		}
+		EndPaint(hWnd, &ps);
+		break;
+	    case WM_DESTROY:
+		PostQuitMessage(NULL);
+		break;
 		default:
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		    return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 	return NULL;
 }
